@@ -1,0 +1,23 @@
+module Datadog
+  module Core
+    module Flare
+      module Transport
+        class Request < Core::Transport::Request
+          attr_reader form: Hash[String, untyped]
+
+          def initialize: (Hash[String, untyped] form) -> void
+        end
+
+        class Client < Core::Transport::HTTP::Client
+          def build_env: (Request request) -> Core::Transport::HTTP::Env
+        end
+
+        class Transport < Core::Transport::Transport
+          def send_flare: (
+            Hash[String, untyped] form
+          ) -> (Core::Transport::HTTP::Response | Core::Transport::InternalErrorResponse)
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,44 @@
+module Datadog
+  module Core
+    module Flare
+      module Remote
+        PRODUCTS: Array[String]
+
+        def self.products: () -> Array[String]
+
+        def self.capabilities: () -> Array[Integer]
+
+        def self.receivers: (Core::Telemetry::Component telemetry) -> Array[Core::Remote::Dispatcher::Receiver]
+
+        def self.process_changes: (Array[Core::Remote::Configuration::Repository::change] changes) -> void
+
+        private
+
+        def self.process_change: (
+          Core::Flare::Component? component,
+          Core::Remote::Configuration::Repository::change change
+        ) -> void
+
+        def self.process_content: (
+          Core::Flare::Component? component,
+          Core::Remote::Configuration::Repository::Change::Inserted | Core::Remote::Configuration::Repository::Change::Updated change
+        ) -> void
+
+        def self.process_config: (
+          Core::Flare::Component? component,
+          String config_id,
+          Hash[String, untyped] data
+        ) -> void
+
+        def self.process_task: (Core::Flare::Component? component, Hash[String, untyped] data) -> void
+
+        def self.process_delete: (
+          Core::Flare::Component? component,
+          Core::Remote::Configuration::Repository::Change::Deleted change
+        ) -> void
+
+        def self.valid_case_id?: (untyped case_id) -> bool
+      end
+    end
+  end
+end

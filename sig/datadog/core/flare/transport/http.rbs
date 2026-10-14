@@ -1,0 +1,16 @@
+module Datadog
+  module Core
+    module Flare
+      module Transport
+        module HTTP
+          FLARE_ENDPOINT: Core::Transport::HTTP::API::Endpoint
+
+          def self.flare: (
+            agent_settings: Core::Configuration::AgentSettings,
+            logger: Core::Logger
+          ) -> Core::Flare::Transport::Transport
+        end
+      end
+    end
+  end
+end

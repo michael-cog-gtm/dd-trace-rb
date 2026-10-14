@@ -1,0 +1,43 @@
+module Datadog
+  module Core
+    module Flare
+      class LogCapture
+        @level: Integer
+
+        @max_bytes: Integer
+
+        @lines: Array[String]
+
+        @byte_count: Integer
+
+        @truncated: bool
+
+        @mutex: ::Mutex
+
+        @attached_logger: ::Logger?
+
+        @installed_methods: bool
+
+        MAX_BYTES: Integer
+
+        TRUNCATED_MESSAGE: String
+
+        LABELS: Array[String]
+
+        def initialize: (level: Integer, ?max_bytes: Integer) -> void
+
+        def attach: (::Logger logger) -> bool
+
+        def detach: (::Logger logger) -> void
+
+        def contents: () -> String
+
+        def record: (Integer severity, untyped message) -> void
+
+        private
+
+        def message_string: (untyped message) -> String
+      end
+    end
+  end
+end

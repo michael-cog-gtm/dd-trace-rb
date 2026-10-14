@@ -339,7 +339,7 @@ RSpec.describe Datadog::Core::Remote::Client::Capabilities do
   context "Tracing component" do
     it "register capabilities, products, and receivers" do
       expect(capabilities.capabilities).to contain_exactly(1 << 12, 1 << 13, 1 << 14, 1 << 29, 1 << 45)
-      expect(capabilities.products).to include("APM_TRACING")
+      expect(capabilities.products).to include("APM_TRACING", "AGENT_CONFIG", "AGENT_TASK")
       expect(capabilities.receivers).to include(
         lambda { |r|
           r.match? Datadog::Core::Remote::Configuration::Path.parse("datadog/1/APM_TRACING/_/lib_config")

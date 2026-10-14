@@ -1083,6 +1083,7 @@ RSpec.describe Datadog::Core::Configuration::Components do
       it "shuts down all components" do
         expect(components.tracer).to receive(:shutdown!)
         expect(components.remote).to receive(:shutdown!) unless components.remote.nil?
+        expect(components.flare).to receive(:shutdown!) unless components.flare.nil?
         expect(components.profiler).to receive(:shutdown!) unless components.profiler.nil?
         expect(components.dynamic_instrumentation).to receive(:shutdown!) unless components.dynamic_instrumentation.nil?
         expect(components.symbol_database).to receive(:shutdown!) unless components.symbol_database.nil?
@@ -1110,6 +1111,7 @@ RSpec.describe Datadog::Core::Configuration::Components do
 
         it "reports the failure and continues library shutdown" do
           expect(components.remote).to receive(:shutdown!) unless components.remote.nil?
+          expect(components.flare).to receive(:shutdown!) unless components.flare.nil?
           expect(components.dynamic_instrumentation).to receive(:shutdown!) unless components.dynamic_instrumentation.nil?
           expect(components.symbol_database).to receive(:shutdown!) unless components.symbol_database.nil?
           expect(components.logger).to receive(:error)
