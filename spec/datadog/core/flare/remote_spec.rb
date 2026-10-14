@@ -76,7 +76,7 @@ RSpec.describe Datadog::Core::Flare::Remote do
     change = build_change(
       product: "AGENT_TASK",
       config_id: "task-1",
-      data: '{"task_type":"tracer_flare","case_id":"12345","uuid":"task-uuid","args":{"hostname":"host","user_handle":"person@example.com"}}',
+      data: '{"task_type":"tracer_flare","uuid":"task-uuid","args":{"case_id":"12345","hostname":"host","user_handle":"person@example.com"}}',
     )
 
     process(change)
@@ -91,7 +91,11 @@ RSpec.describe Datadog::Core::Flare::Remote do
   end
 
   it "acknowledges other task types without uploading" do
-    change = build_change(product: "AGENT_TASK", config_id: "task-1", data: '{"task_type":"flare","args":{}}')
+    change = build_change(
+      product: "AGENT_TASK",
+      config_id: "task-1",
+      data: '{"task_type":"flare","uuid":"task-uuid","args":{"case_id":"12345","hostname":"host","user_handle":"person@example.com"}}',
+    )
 
     process(change)
 
@@ -103,7 +107,20 @@ RSpec.describe Datadog::Core::Flare::Remote do
     change = build_change(
       product: "AGENT_TASK",
       config_id: "task-1",
-      data: '{"task_type":"tracer_flare","case_id":"0","args":{}}',
+      data: '{"task_type":"tracer_flare","uuid":"task-uuid","args":{"case_id":"0","hostname":"host","user_handle":"person@example.com"}}',
+    )
+
+    process(change)
+
+    expect(component).not_to have_received(:send_flare)
+    expect(change.content.apply_state).to eq(Datadog::Core::Remote::Configuration::Content::ApplyState::ACKNOWLEDGED)
+  end
+
+  it "acknowledges a task with only a top-level case id without uploading" do
+    change = build_change(
+      product: "AGENT_TASK",
+      config_id: "task-1",
+      data: '{"task_type":"tracer_flare","case_id":"12345","uuid":"task-uuid","args":{"hostname":"host","user_handle":"person@example.com"}}',
     )
 
     process(change)
@@ -132,7 +149,7 @@ RSpec.describe Datadog::Core::Flare::Remote do
     task = build_change(
       product: "AGENT_TASK",
       config_id: "task-1",
-      data: '{"task_type":"tracer_flare","case_id":"12345","args":{}}',
+      data: '{"task_type":"tracer_flare","uuid":"task-uuid","args":{"case_id":"12345","hostname":"host","user_handle":"person@example.com"}}',
     )
     config = build_change(
       product: "AGENT_CONFIG",

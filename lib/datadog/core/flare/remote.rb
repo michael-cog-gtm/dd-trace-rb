@@ -100,7 +100,7 @@ module Datadog
             args = data["args"]
             return unless args.is_a?(Hash)
 
-            case_id = data["case_id"]
+            case_id = args["case_id"]
             unless valid_case_id?(case_id)
               Datadog.logger.debug { "Flare: ignoring task with invalid case_id" }
               return
