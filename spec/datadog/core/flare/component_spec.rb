@@ -46,6 +46,16 @@ RSpec.describe Datadog::Core::Flare::Component do
       expect(logger.level).to eq(::Logger::INFO)
     end
 
+    it "preserves an externally changed logger level and detaches the capture" do
+      component.prepare("debug", config_id: "flare-1")
+      logger.level = ::Logger::WARN
+
+      component.revert
+
+      expect(logger.level).to eq(::Logger::WARN)
+      expect(logger.singleton_methods(false)).not_to include(:add, :log)
+    end
+
     it "ignores a second prepare and refuses to revert a different config" do
       component.prepare("debug", config_id: "flare-1")
 

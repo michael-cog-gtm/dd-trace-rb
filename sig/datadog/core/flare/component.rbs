@@ -16,6 +16,8 @@ module Datadog
 
         @original_level: Integer?
 
+        @applied_level: Integer?
+
         @level_name: String?
 
         @started_at: Float?

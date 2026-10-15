@@ -30,7 +30,7 @@ module Datadog
           Hash[String, untyped] data
         ) -> void
 
-        def self.process_task: (Core::Flare::Component? component, Hash[String, untyped] data) -> void
+        def self.process_task: (Core::Flare::Component? component, Hash[String, untyped] data) -> bool?
 
         def self.process_delete: (
           Core::Flare::Component? component,

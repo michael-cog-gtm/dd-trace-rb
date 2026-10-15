@@ -90,6 +90,33 @@ RSpec.describe Datadog::Core::Flare::Remote do
     expect(change.content.apply_state).to eq(Datadog::Core::Remote::Configuration::Content::ApplyState::ACKNOWLEDGED)
   end
 
+  it "marks tracer flare tasks errored when the upload fails" do
+    allow(component).to receive(:send_flare).and_return(false)
+    change = build_change(
+      product: "AGENT_TASK",
+      config_id: "task-1",
+      data: '{"task_type":"tracer_flare","uuid":"task-uuid","args":{"case_id":"12345","hostname":"host","user_handle":"person@example.com"}}',
+    )
+
+    process(change)
+
+    expect(change.content.apply_state).to eq(Datadog::Core::Remote::Configuration::Content::ApplyState::ERROR)
+    expect(change.content.apply_error).to eq("failed to send tracer flare")
+  end
+
+  it "acknowledges tracer flare tasks when the component is absent" do
+    allow(components).to receive(:flare).and_return(nil)
+    change = build_change(
+      product: "AGENT_TASK",
+      config_id: "task-1",
+      data: '{"task_type":"tracer_flare","uuid":"task-uuid","args":{"case_id":"12345","hostname":"host","user_handle":"person@example.com"}}',
+    )
+
+    process(change)
+
+    expect(change.content.apply_state).to eq(Datadog::Core::Remote::Configuration::Content::ApplyState::ACKNOWLEDGED)
+  end
+
   it "acknowledges other task types without uploading" do
     change = build_change(
       product: "AGENT_TASK",

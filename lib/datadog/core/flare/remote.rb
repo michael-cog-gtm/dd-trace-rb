@@ -76,8 +76,9 @@ module Datadog
 
             if change.path.product == "AGENT_CONFIG"
               process_config(component, change.path.config_id, data)
-            else
-              process_task(component, data)
+            elsif process_task(component, data) == false
+              content.errored("failed to send tracer flare")
+              return
             end
 
             content.applied

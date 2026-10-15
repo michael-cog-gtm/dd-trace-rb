@@ -38,6 +38,7 @@ module Datadog
           @capture = nil
           @config_id = nil
           @original_level = nil
+          @applied_level = nil
           @level_name = nil
           @started_at = nil
           @transport = nil
@@ -58,7 +59,8 @@ module Datadog
 
             original_level = @logger.level
             @original_level = original_level
-            @logger.level = [original_level, flare_level].min
+            @applied_level = [original_level, flare_level].min
+            @logger.level = @applied_level
             capture = LogCapture.new(level: flare_level)
             @capture = capture
             capture.attach(@logger)
@@ -151,10 +153,12 @@ module Datadog
 
           capture.detach(@logger)
           original_level = @original_level
-          @logger.level = original_level if original_level
+          applied_level = @applied_level
+          @logger.level = original_level if original_level && @logger.level == applied_level
           @capture = nil
           @config_id = nil
           @original_level = nil
+          @applied_level = nil
           @level_name = nil
           @started_at = nil
           nil

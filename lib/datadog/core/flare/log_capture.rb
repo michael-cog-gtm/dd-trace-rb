@@ -32,7 +32,7 @@ module Datadog
           record = method(:record)
           level = @level
           logger.define_singleton_method(:add) do |severity, message = nil, progname = nil, &block|
-            if severity >= level
+            if severity >= level && severity >= self.level
               used_progname = message.nil? && !block
               resolved_message = if message.nil?
                 block ? block.call : progname

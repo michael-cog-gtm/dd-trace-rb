@@ -12,6 +12,7 @@ RSpec.describe Datadog::Core::Flare::LogCapture do
   subject(:capture) { described_class.new(level: ::Logger::DEBUG) }
 
   it "captures message, block, and progname-only logging" do
+    logger.level = ::Logger::DEBUG
     capture.attach(logger)
     block_calls = 0
 
@@ -35,6 +36,19 @@ RSpec.describe Datadog::Core::Flare::LogCapture do
     logger.info("below capture level")
 
     expect(capture.contents).to eq("")
+  ensure
+    capture.detach(logger)
+  end
+
+  it "does not evaluate messages below the logger level" do
+    logger.level = ::Logger::DEBUG
+    capture.attach(logger)
+    logger.level = ::Logger::WARN
+
+    expect { logger.debug { raise "evaluated" } }.not_to raise_error
+    logger.warn("x")
+
+    expect(capture.contents).to include("x")
   ensure
     capture.detach(logger)
   end
@@ -86,6 +100,7 @@ RSpec.describe Datadog::Core::Flare::LogCapture do
 
   it "adds one truncation marker after reaching the byte limit" do
     capture = described_class.new(level: ::Logger::DEBUG, max_bytes: 1)
+    logger.level = ::Logger::DEBUG
     capture.attach(logger)
 
     logger.debug("first")
