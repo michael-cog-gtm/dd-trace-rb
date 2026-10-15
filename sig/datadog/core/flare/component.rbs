@@ -1,0 +1,65 @@
+module Datadog
+  module Core
+    module Flare
+      class Component
+        @settings: Core::Configuration::Settings
+
+        @agent_settings: Core::Configuration::AgentSettings
+
+        @logger: Core::Logger
+
+        @mutex: ::Mutex
+
+        @capture: LogCapture?
+
+        @config_id: String?
+
+        @original_level: Integer?
+
+        @applied_level: Integer?
+
+        @level_name: String?
+
+        @started_at: Float?
+
+        @transport: Transport::Transport?
+
+        STALE_DURATION_SECONDS: Integer
+
+        LOG_LEVELS: Hash[String, Integer]
+
+        def self.build: (
+          Core::Configuration::Settings settings,
+          Core::Configuration::AgentSettings agent_settings,
+          logger: Core::Logger
+        ) -> Component?
+
+        def initialize: (
+          settings: Core::Configuration::Settings,
+          agent_settings: Core::Configuration::AgentSettings,
+          logger: Core::Logger
+        ) -> void
+
+        def prepare: (String level_name, config_id: String) -> bool
+
+        def revert: (?config_id: String?) -> void
+
+        def check_stale!: () -> void
+
+        def send_flare: (case_id: String, hostname: String, email: String, uuid: String) -> bool
+
+        def shutdown!: () -> void
+
+        private
+
+        def revert_locked: () -> nil
+
+        def transport: () -> Transport::Transport
+
+        def config_dump: () -> Hash[Symbol, untyped]
+
+        def collect_config: () { () -> Hash[Symbol, untyped] } -> Hash[Symbol, untyped]
+      end
+    end
+  end
+end

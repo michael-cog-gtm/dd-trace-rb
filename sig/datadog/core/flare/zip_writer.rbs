@@ -1,0 +1,13 @@
+module Datadog
+  module Core
+    module Flare
+      module ZipWriter
+        def self.build: (Array[[String, String]] entries) -> String
+
+        private
+
+        def self.deflate: (String content) -> String
+      end
+    end
+  end
+end

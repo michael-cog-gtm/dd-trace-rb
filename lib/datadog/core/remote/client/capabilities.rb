@@ -6,6 +6,7 @@ require_relative "../../../tracing/remote"
 require_relative "../../../di/remote"
 require_relative "../../../symbol_database"
 require_relative "../../../symbol_database/remote"
+require_relative "../../flare/remote"
 
 module Datadog
   module Core
@@ -111,6 +112,10 @@ module Datadog
                 end
               end
             end
+
+            register_capabilities(Datadog::Core::Flare::Remote.capabilities)
+            register_products(Datadog::Core::Flare::Remote.products)
+            register_receivers(Datadog::Core::Flare::Remote.receivers(@telemetry))
           end
 
           def register_capabilities(capabilities)

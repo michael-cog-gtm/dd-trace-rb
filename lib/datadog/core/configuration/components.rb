@@ -21,6 +21,7 @@ require_relative "../../ai_guard/component"
 require_relative "../../di/component"
 require_relative "../../symbol_database"
 require_relative "../../symbol_database/component"
+require_relative "../flare/component"
 require_relative "../../open_feature/activation"
 require_relative "../../error_tracking/component"
 require_relative "../crashtracking/component"
@@ -154,7 +155,8 @@ module Datadog
           :ai_guard,
           :agent_info,
           :data_streams,
-          :symbol_database
+          :symbol_database,
+          :flare
 
         def initialize(settings)
           @settings = settings
@@ -193,6 +195,7 @@ module Datadog
             logger: @logger,
             telemetry: telemetry,
           )
+          @flare = Core::Flare::Component.build(settings, agent_settings, logger: @logger)
           @tracer = Datadog::Tracing::Component.build_tracer(settings, agent_settings, logger: @logger)
           @crashtracker = self.class.build_crashtracker(settings, agent_settings, logger: @logger)
 
@@ -328,6 +331,7 @@ module Datadog
         def shutdown!(replacement = nil)
           # Shutdown remote configuration
           remote&.shutdown!
+          flare&.shutdown!
 
           # Shutdown DI after remote, since remote config triggers DI operations.
           dynamic_instrumentation&.shutdown!
